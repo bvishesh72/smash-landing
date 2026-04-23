@@ -223,7 +223,7 @@
 
     .screenshot-img {
       width: 100%;
-      aspect-ratio: 9/16;
+      aspect-ratio: unset; min-height: 380px;
       background: var(--bg);
       display: flex;
       align-items: center;
@@ -509,6 +509,53 @@
         </div>
       </div>
 
+      <!-- Screen 2: Drills -->
+      <div class="screenshot-card reveal">
+        <div class="screenshot-img">
+          <div class="mock-screen">
+            <div class="mock-header">Drill Library</div>
+            <div class="mock-sub">109 drills · Filtered for your setup</div>
+
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
+              <div style="background:var(--primary-dim); border:1px solid rgba(110,231,183,0.2); border-radius:100px; padding:4px 12px; font-size:11px; color:var(--primary);">Intermediate</div>
+              <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:100px; padding:4px 12px; font-size:11px; color:var(--muted);">Solo</div>
+              <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:100px; padding:4px 12px; font-size:11px; color:var(--muted);">Court</div>
+            </div>
+
+            <div class="mock-drill">
+              <div class="mock-drill-title">Six Corner Shadow Continuous</div>
+              <div style="display:flex; gap:6px; margin-top:4px; align-items:center;">
+                <div style="font-size:10px; color:var(--primary); background:var(--primary-dim); padding:2px 8px; border-radius:100px;">Footwork</div>
+                <div style="font-size:10px; color:var(--muted);">Intermediate · 12 min</div>
+              </div>
+              <div class="mock-drill-btn">View drill →</div>
+            </div>
+
+            <div class="mock-drill">
+              <div class="mock-drill-title">Short Serve Accuracy Ladder</div>
+              <div style="display:flex; gap:6px; margin-top:4px; align-items:center;">
+                <div style="font-size:10px; color:var(--primary); background:var(--primary-dim); padding:2px 8px; border-radius:100px;">Serves</div>
+                <div style="font-size:10px; color:var(--muted);">Intermediate · 20 min</div>
+              </div>
+              <div class="mock-drill-btn">View drill →</div>
+            </div>
+
+            <div class="mock-drill">
+              <div class="mock-drill-title">Cross-Court Drop Shot Drill</div>
+              <div style="display:flex; gap:6px; margin-top:4px; align-items:center;">
+                <div style="font-size:10px; color:var(--primary); background:var(--primary-dim); padding:2px 8px; border-radius:100px;">Drops</div>
+                <div style="font-size:10px; color:var(--muted);">Intermediate · 15 min</div>
+              </div>
+              <div class="mock-drill-btn">View drill →</div>
+            </div>
+          </div>
+        </div>
+        <div class="screenshot-caption">
+          <div class="caption-num">02 — Drills</div>
+          <div class="caption-text">109 drills across every skill. Filter by level, location, and solo or partner setup.</div>
+        </div>
+      </div>
+
       <!-- Screen 2: Session -->
       <div class="screenshot-card reveal">
         <div class="screenshot-img">
@@ -553,7 +600,7 @@
           </div>
         </div>
         <div class="screenshot-caption">
-          <div class="caption-num">02 — Session</div>
+          <div class="caption-num">03 — Session</div>
           <div class="caption-text">Each session breaks down into specific drills with clear steps. Tap to mark done as you go.</div>
         </div>
       </div>
@@ -602,7 +649,7 @@
           </div>
         </div>
         <div class="screenshot-caption">
-          <div class="caption-num">03 — Progress</div>
+          <div class="caption-num">04 — Progress</div>
           <div class="caption-text">Track your streak, sessions, and badges as you build real consistency over 30 days.</div>
         </div>
       </div>
@@ -610,9 +657,17 @@
     </section>
   </div>
 
+  <!-- BOTTOM CTA -->
+  <div class="container" style="text-align:center; padding: 16px 20px 48px; position:relative; z-index:1;">
+    <p style="font-size:15px; color: var(--muted); margin-bottom: 20px; line-height:1.6;">Ready to train smarter?<br>It takes 2 minutes to get your first plan.</p>
+    <a href="https://smash-app-xi.vercel.app" class="cta-btn" style="animation:none;">
+      Try it free <span class="cta-arrow">→</span>
+    </a>
+  </div>
+
   <!-- FOOTER -->
   <footer>
-    <p class="footer-built">Built by <a href="https://smash-app-xi.vercel.app">Vishesh Bhardwaj</a></p>
+    <p class="footer-built">Built by <a href="https://smash-app-xi.vercel.app">Vishesh Bhardwaj</a> · <a href="https://instagram.com/multilifted_vishesh" style="color: var(--muted);">@multilifted_vishesh</a></p>
     <div class="footer-links">
       <a href="https://smash-app-xi.vercel.app/privacy.html">Privacy</a>
       <a href="https://smash-app-xi.vercel.app/terms.html">Terms</a>
