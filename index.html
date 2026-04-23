@@ -1,39 +1,635 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="google-site-verification" content="aBImrtSbQBoKPVu96jV2jDK-DZjvZpD00LqHaO_p9mI" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Smash</title>
-    <meta name="description" content="Your personal badminton training app" />
-    <meta name="author" content="Smash" />
-    <meta property="og:title" content="Smash" />
-    <meta property="og:description" content="Your personal badminton training app" />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@SmashApp" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/smash_logo_inverted_32x32.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/smash_logo_180x180.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/smash_logo_inverted_192x192.png" />
-    <link rel="icon" type="image/png" sizes="512x512" href="/smash_logo_inverted_512x512.png" />
-    <link rel="icon" type="image/png" href="/smash_logo_inverted_512x512.png" />
-    <link rel="apple-touch-icon" href="/smash_logo_180x180.png" />
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-052N83T1Q9"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-052N83T1Q9');
-    </script>
-    <script type="module" crossorigin src="/assets/index-MY4ENbIZ.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/query-vendor-HPKPf7Dx.js">
-    <link rel="modulepreload" crossorigin href="/assets/react-vendor-CdY8cGl1.js">
-    <link rel="modulepreload" crossorigin href="/assets/ui-vendor-DSkaosMs.js">
-    <link rel="modulepreload" crossorigin href="/assets/supabase-vendor-ClVc2H6D.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-Dut6SwvW.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smash App — Train Smarter. Play Better.</title>
+  <meta name="description" content="A personalised badminton training app for players who want to improve consistently. Free to try." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080b0f;
+      --surface: #0f1419;
+      --border: rgba(255,255,255,0.07);
+      --primary: #6ee7b7;
+      --primary-dim: rgba(110,231,183,0.12);
+      --primary-glow: rgba(110,231,183,0.25);
+      --text: #f0f4f8;
+      --muted: #7a8a99;
+      --accent: #38bdf8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* Ambient glow */
+    .glow-orb {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(110,231,183,0.06) 0%, transparent 70%);
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 20px;
+      max-width: 480px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.3px;
+    }
+
+    .nav-logo span {
+      display: inline-flex;
+      width: 28px;
+      height: 28px;
+      background: var(--primary);
+      border-radius: 8px;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 48px 0 40px;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary-dim);
+      border: 1px solid rgba(110,231,183,0.2);
+      border-radius: 100px;
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--primary);
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 8px var(--primary);
+      animation: pulse 2s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(36px, 8vw, 52px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -1.5px;
+      margin-bottom: 16px;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+
+    h1 em {
+      font-style: normal;
+      color: var(--primary);
+    }
+
+    .subline {
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 32px;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary);
+      color: #050a06;
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 14px 32px;
+      border-radius: 100px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 0 0 0 var(--primary-glow);
+      animation: fadeUp 0.6s 0.3s ease both;
+      letter-spacing: -0.2px;
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px var(--primary-glow);
+    }
+
+    .cta-btn:active {
+      transform: translateY(0);
+    }
+
+    .cta-arrow {
+      font-size: 18px;
+      transition: transform 0.15s ease;
+    }
+
+    .cta-btn:hover .cta-arrow {
+      transform: translateX(3px);
+    }
+
+    /* ── SCREENSHOTS ── */
+    .screenshots {
+      padding: 48px 0;
+    }
+
+    .screenshot-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      animation: fadeUp 0.6s ease both;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .screenshot-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(110,231,183,0.15);
+    }
+
+    .screenshot-card:nth-child(1) { animation-delay: 0.1s; }
+    .screenshot-card:nth-child(2) { animation-delay: 0.2s; }
+    .screenshot-card:nth-child(3) { animation-delay: 0.3s; }
+
+    .screenshot-img {
+      width: 100%;
+      aspect-ratio: 9/16;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Mock screen UI */
+    .mock-screen {
+      width: 100%;
+      height: 100%;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .mock-header {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+
+    .mock-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .mock-bar {
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      overflow: hidden;
+    }
+
+    .mock-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--primary);
+    }
+
+    .mock-row {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mock-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .mock-dot.green { background: var(--primary); box-shadow: 0 0 8px var(--primary-glow); }
+    .mock-dot.blue { background: var(--accent); }
+    .mock-dot.gray { background: var(--border); }
+
+    .mock-row-text { flex: 1; }
+    .mock-row-title { font-size: 12px; font-weight: 500; }
+    .mock-row-meta { font-size: 10px; color: var(--muted); margin-top: 2px; }
+    .mock-row-badge { font-size: 10px; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 100px; }
+
+    .mock-stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .mock-stat {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 10px;
+      text-align: center;
+    }
+
+    .mock-stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .mock-stat-label {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .mock-drill {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .mock-drill-title { font-size: 13px; font-weight: 500; }
+    .mock-drill-meta { font-size: 10px; color: var(--muted); margin-top: 3px; }
+    .mock-drill-btn {
+      margin-top: 8px;
+      font-size: 10px;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .mock-check {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+
+    .mock-check.done {
+      background: var(--primary-dim);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .screenshot-caption {
+      padding: 16px 20px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .caption-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .caption-text {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 32px 20px 40px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-built {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .footer-built a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .footer-links a {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .footer-links a:hover {
+      color: var(--text);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-orb"></div>
+
+  <nav>
+    <a href="#" class="nav-logo">
+      <span>🏸</span>
+      Smash
+    </a>
+    <a href="https://smash-app-xi.vercel.app" class="cta-btn" style="padding: 10px 20px; font-size: 13px; animation: none;">
+      Try free <span class="cta-arrow">→</span>
+    </a>
+  </nav>
+
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge">Free to try · No credit card</div>
+      <h1>Train smarter.<br><em>Play better.</em></h1>
+      <p class="subline">A personalised training app for badminton players who want to improve consistently — beginners, intermediates, and returning players.</p>
+      <a href="https://smash-app-xi.vercel.app" class="cta-btn">
+        Try it free <span class="cta-arrow">→</span>
+      </a>
+    </section>
+
+    <!-- SCREENSHOTS -->
+    <section class="screenshots">
+
+      <!-- Screen 1: Plan -->
+      <div class="screenshot-card reveal">
+        <div class="screenshot-img">
+          <div class="mock-screen">
+            <div class="mock-header">Your 30-Day Plan</div>
+            <div class="mock-sub">Week 2 · 4 sessions/week · Court</div>
+            <div class="mock-bar" style="margin-bottom: 12px;"><div class="mock-bar-fill" style="width: 38%;"></div></div>
+
+            <div class="mock-row">
+              <div class="mock-dot green"></div>
+              <div class="mock-row-text">
+                <div class="mock-row-title">Day 8 · Footwork Focus</div>
+                <div class="mock-row-meta">Footwork · 40 min · Court</div>
+              </div>
+              <div class="mock-row-badge">Today</div>
+            </div>
+
+            <div class="mock-row" style="opacity: 0.5;">
+              <div class="mock-dot gray"></div>
+              <div class="mock-row-text">
+                <div class="mock-row-title">Day 9 · Light Recovery</div>
+                <div class="mock-row-meta">Recovery · 12 min · Anywhere</div>
+              </div>
+            </div>
+
+            <div class="mock-row" style="opacity: 0.5;">
+              <div class="mock-dot gray"></div>
+              <div class="mock-row-text">
+                <div class="mock-row-title">Day 10 · Smash Power</div>
+                <div class="mock-row-meta">Technique · 40 min · Court</div>
+              </div>
+            </div>
+
+            <div class="mock-row" style="opacity: 0.5;">
+              <div class="mock-dot gray"></div>
+              <div class="mock-row-text">
+                <div class="mock-row-title">Day 11 · Mixed Skills</div>
+                <div class="mock-row-meta">Technique · 40 min · Anywhere</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screenshot-caption">
+          <div class="caption-num">01 — Plan</div>
+          <div class="caption-text">Your personalised 30-day plan, built around your level, goals, and where you train.</div>
+        </div>
+      </div>
+
+      <!-- Screen 2: Session -->
+      <div class="screenshot-card reveal">
+        <div class="screenshot-img">
+          <div class="mock-screen">
+            <div class="mock-header">Footwork Focus</div>
+            <div class="mock-sub">Day 8 · 40 min · 0/3 drills done</div>
+            <div class="mock-bar" style="margin-bottom: 12px;"><div class="mock-bar-fill" style="width: 0%;"></div></div>
+
+            <div class="mock-drill">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="mock-check done">✓</div>
+                <div>
+                  <div class="mock-drill-title">Split-Step Bounce</div>
+                  <div class="mock-drill-meta">Warm-Up · 1 min</div>
+                </div>
+                <div style="margin-left:auto; font-size:10px; color: var(--muted);">Undo</div>
+              </div>
+            </div>
+
+            <div class="mock-drill">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="mock-check"></div>
+                <div>
+                  <div class="mock-drill-title">Six Corner Shadow Continuous</div>
+                  <div class="mock-drill-meta">Footwork · 12–15 min</div>
+                </div>
+                <div style="margin-left:auto; font-size:10px; color: var(--primary);">Mark Done</div>
+              </div>
+              <div class="mock-drill-btn">View drill →</div>
+            </div>
+
+            <div class="mock-drill" style="opacity:0.5;">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="mock-check"></div>
+                <div>
+                  <div class="mock-drill-title">Rear Court Scissor Step</div>
+                  <div class="mock-drill-meta">Footwork · 12 min</div>
+                </div>
+                <div style="margin-left:auto; font-size:10px; color: var(--primary);">Mark Done</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screenshot-caption">
+          <div class="caption-num">02 — Session</div>
+          <div class="caption-text">Each session breaks down into specific drills with clear steps. Tap to mark done as you go.</div>
+        </div>
+      </div>
+
+      <!-- Screen 3: Progress -->
+      <div class="screenshot-card reveal">
+        <div class="screenshot-img">
+          <div class="mock-screen">
+            <div class="mock-header">Your Progress</div>
+            <div class="mock-sub">Keep the streak going 🔥</div>
+
+            <div class="mock-stat-row">
+              <div class="mock-stat">
+                <div class="mock-stat-num">12</div>
+                <div class="mock-stat-label">Sessions</div>
+              </div>
+              <div class="mock-stat">
+                <div class="mock-stat-num">7</div>
+                <div class="mock-stat-label">Day streak</div>
+              </div>
+              <div class="mock-stat">
+                <div class="mock-stat-num">6h</div>
+                <div class="mock-stat-label">Total</div>
+              </div>
+            </div>
+
+            <div style="margin-top: 8px;">
+              <div class="mock-sub" style="margin-bottom: 8px;">BADGES EARNED</div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <div style="background: var(--primary-dim); border: 1px solid rgba(110,231,183,0.2); border-radius: 10px; padding: 8px 12px; font-size: 11px; color: var(--primary);">🏸 First Session</div>
+                <div style="background: var(--primary-dim); border: 1px solid rgba(110,231,183,0.2); border-radius: 10px; padding: 8px 12px; font-size: 11px; color: var(--primary);">🔥 7-Day Streak</div>
+                <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-size: 11px; color: var(--muted);">🎯 Consistent</div>
+              </div>
+            </div>
+
+            <div style="margin-top: 8px;">
+              <div class="mock-sub" style="margin-bottom: 8px;">RECENT ACTIVITY</div>
+              <div class="mock-row">
+                <div class="mock-dot green"></div>
+                <div class="mock-row-text">
+                  <div class="mock-row-title">Footwork Focus</div>
+                  <div class="mock-row-meta">Today · 40 min</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screenshot-caption">
+          <div class="caption-num">03 — Progress</div>
+          <div class="caption-text">Track your streak, sessions, and badges as you build real consistency over 30 days.</div>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="footer-built">Built by <a href="https://smash-app-xi.vercel.app">Vishesh</a> · Surrey, BC</p>
+    <div class="footer-links">
+      <a href="https://smash-app-xi.vercel.app/privacy.html">Privacy</a>
+      <a href="https://smash-app-xi.vercel.app/terms.html">Terms</a>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
 </html>
