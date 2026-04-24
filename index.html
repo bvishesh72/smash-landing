@@ -657,6 +657,30 @@
     </section>
   </div>
 
+  <!-- EMAIL CAPTURE -->
+  <div class="container" style="padding: 0 20px 48px; position:relative; z-index:1;">
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 32px 24px; text-align:center;">
+      <p style="font-family: Syne, sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px;">Join the waitlist</p>
+      <p style="font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height:1.5;">Get notified when new features drop. No spam, ever.</p>
+      <div id="waitlist-form" style="display:flex; gap:8px; flex-direction:column;">
+        <input
+          type="email"
+          id="waitlist-email"
+          placeholder="your@email.com"
+          style="background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; font-size: 15px; color: var(--text); outline: none; font-family: DM Sans, sans-serif; width:100%;"
+        />
+        <button
+          onclick="submitWaitlist()"
+          id="waitlist-btn"
+          style="background: var(--primary); color: #050a06; font-family: Syne, sans-serif; font-size: 15px; font-weight: 700; padding: 14px; border-radius: 12px; border: none; cursor: pointer; letter-spacing: -0.2px;"
+        >
+          Notify me
+        </button>
+      </div>
+      <p id="waitlist-msg" style="display:none; margin-top:16px; font-size:14px;"></p>
+    </div>
+  </div>
+
   <!-- BOTTOM CTA -->
   <div class="container" style="text-align:center; padding: 16px 20px 48px; position:relative; z-index:1;">
     <p style="font-size:15px; color: var(--muted); margin-bottom: 20px; line-height:1.6;">Ready to train smarter?<br>It takes 2 minutes to get your first plan.</p>
@@ -676,6 +700,51 @@
   </footer>
 
   <script>
+    async function submitWaitlist() {
+      const email = document.getElementById('waitlist-email').value.trim();
+      const btn = document.getElementById('waitlist-btn');
+      const msg = document.getElementById('waitlist-msg');
+
+      if (!email || !email.includes('@')) {
+        msg.style.display = 'block';
+        msg.style.color = '#f87171';
+        msg.textContent = 'Please enter a valid email.';
+        return;
+      }
+
+      btn.textContent = 'Adding you...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/waitlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          document.getElementById('waitlist-form').style.display = 'none';
+          msg.style.display = 'block';
+          msg.style.color = 'var(--primary)';
+          msg.textContent = "You're on the list. We'll be in touch 🏸";
+        } else {
+          btn.textContent = 'Notify me';
+          btn.disabled = false;
+          msg.style.display = 'block';
+          msg.style.color = '#f87171';
+          msg.textContent = data.error || 'Something went wrong. Try again.';
+        }
+      } catch (err) {
+        btn.textContent = 'Notify me';
+        btn.disabled = false;
+        msg.style.display = 'block';
+        msg.style.color = '#f87171';
+        msg.textContent = 'Something went wrong. Try again.';
+      }
+    }
+
     // Scroll reveal
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => {
